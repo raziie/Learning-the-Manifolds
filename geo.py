@@ -33,24 +33,21 @@ class KNearestNeighbors:
         # TODO: For each point, find the indices of the k smallest distances
         # Find distances
         distance_matrix = _compute_distance_matrix(X)
-        # Sort distances
-        # ?????????????????? it is not working correctly
-        sorted_indices = np.argsort(distance_matrix, axis=1)
+
+        # Mask out the diagonal by setting it to infinity
+        np.fill_diagonal(distance_matrix, np.inf)
+
+        # Sort distances and get the nearest k ones
+        k_nearest_neighbors = np.argsort(distance_matrix, axis=1)[:, :self.k]
 
         # Initialize adjacency matrix with infinity
         m = distance_matrix.shape[0]
         neighbors = np.full((m, m), np.inf)
-        # Find the place of k nearest neighbors
-        condition = (sorted_indices <= self.k)
-        # ???????????????????? is this needed?
-        # & (sorted_indices > 0)
+        np.fill_diagonal(neighbors, 0)
         # Set distances of k nearest ones
-        neighbors[condition] = distance_matrix[condition]
-
-        # or
-
-        # # Set distances greater than epsilon to infinity
-        # neighbors = np.where(sorted_indices <= self.k, distance_matrix, np.inf)
+        # Use advanced indexing to replace the distances for the k nearest neighbors
+        neighbors[np.arange(m)[:, None], k_nearest_neighbors] = distance_matrix[
+            np.arange(m)[:, None], k_nearest_neighbors]
 
         return neighbors
 
@@ -78,20 +75,8 @@ class EpsNeighborhood:
         # Find distances
         distance_matrix = _compute_distance_matrix(X)
 
-        # Initialize adjacency matrix with infinity
-        m = distance_matrix.shape[0]
-        neighbors = np.full((m, m), np.inf)
-        # Find the place of neighbors with distance less than eps
-        condition = (distance_matrix <= self.eps)
-        # ???????????????????? is this needed?
-        # & (distance_matrix > 0)
-        # Set distances of nearest ones
-        neighbors[condition] = distance_matrix[condition]
-
-        # or
-
-        # # Set distances greater than epsilon to infinity
-        # neighbors = np.where(distance_matrix <= self.eps, distance_matrix, np.inf)
+        # Set distances greater than epsilon to infinity
+        neighbors = np.where(distance_matrix <= self.eps, distance_matrix, np.inf)
 
         return neighbors
 
@@ -99,6 +84,13 @@ class EpsNeighborhood:
 if __name__ == "__main__":
     # data = np.random.randn(4, 6)
     data = np.random.randint(10, size=(4, 6))
+    # data = np.array([
+    #     [0, 0],  # Point 0
+    #     [1, 1],  # Point 1
+    #     [2, 2],  # Point 2
+    #     [8, 8],  # Point 3 (far from others)
+    # ])
+
     print(data)
 
     # print(_compute_distance_matrix(data))
@@ -106,5 +98,5 @@ if __name__ == "__main__":
     knn = KNearestNeighbors(2)
     print(knn(data))
 
-    eps_neighborhood = EpsNeighborhood(10)
+    eps_neighborhood = EpsNeighborhood(5)
     print(eps_neighborhood(data))
