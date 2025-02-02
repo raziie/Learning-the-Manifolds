@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from dataset import generate_plane, load_dataset
+from dataset import load_dataset
 
 
 class PCA:
@@ -30,8 +30,8 @@ class PCA:
         # TODO: Use the formula for the covariance matrix.
         # number of samples
         n = X.shape[0]
-        # Covariance formula: (1 / n) X^T X
-        cov_matrix = (1/n) * (X.T@X)
+        # Covariance formula: (1 / n-1) X^T X
+        cov_matrix = (1/(n-1)) * (X.T@X)
 
 
         # # am I supposed to use np.cov or not?
@@ -139,6 +139,15 @@ if __name__ == "__main__":
     # Apply PCA to reduce to 2D
     pca = PCA(n_components=2)
     data_2d = pca.fit_transform(data)
+
+    from sklearn.decomposition import PCA as SklearnPCA
+    # Compare PCA
+    sklearn_pca = SklearnPCA(n_components=2)
+    sklearn_transformed = sklearn_pca.fit_transform(data)
+    print("Scikit-Learn PCA:\n", sklearn_transformed)
+    pca_error = np.linalg.norm(data_2d - sklearn_transformed)
+    print(f"PCA Error: {pca_error:.2f}")
+
 
     # TODO: Visualize the results
     # Visualize the 2D projection
