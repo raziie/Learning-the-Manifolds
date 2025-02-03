@@ -136,14 +136,13 @@ if __name__ == "__main__":
     plt.show()
 
     # Apply the Isomap algorithm to project the data into a 2-dimensional space
-    isomap = Isomap(n_components=2, adj_calculator=KNearestNeighbors(3))
+    isomap = Isomap(n_components=2, adj_calculator=KNearestNeighbors(20))
     data_2d = isomap.fit_transform(data)
 
     from sklearn.manifold import Isomap as SklearnIsomap
     # Compare Isomap
     sklearn_isomap = SklearnIsomap(n_components=2)
     sklearn_transformed = sklearn_isomap.fit_transform(data)
-    print("Scikit-Learn Isomap:\n", sklearn_transformed)
     isomap_error = np.linalg.norm(data_2d - sklearn_transformed)
     print(f"isomap Error: {isomap_error:.2f}")
 
@@ -151,7 +150,7 @@ if __name__ == "__main__":
     plt.figure(figsize=(8, 6))
     plt.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='Spectral', s=15)
     plt.colorbar(label="Labels")
-    plt.title("PCA Projection of Swiss Roll")
+    plt.title("isomap Projection of Swiss Roll")
     plt.xlabel("Principal Component 1")
     plt.ylabel("Principal Component 2")
     plt.show()

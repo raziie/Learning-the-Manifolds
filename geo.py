@@ -37,6 +37,25 @@ class KNearestNeighbors:
         # Mask out the diagonal by setting it to infinity
         np.fill_diagonal(distance_matrix, np.inf)
 
+
+
+        # # to consider all points in the same distance and not just the first one
+        # # Sort distances for each row (each point)
+        # sorted_indices = np.argsort(distance_matrix, axis=1)  # Indices of sorted distances
+        # sorted_distances = np.sort(distance_matrix, axis=1)  # Sorted distances
+        #
+        # # Get the distance of the k-th nearest neighbor
+        # kth_distance = sorted_distances[:, self.k - 1:self.k]  # Shape (m,1)
+        #
+        # # Create a mask where distances <= k-th nearest distance
+        # mask = distance_matrix <= kth_distance  # Shape (m,m), True where edge should exist
+        #
+        # # Construct adjacency matrix with distances, set non-edges to np.inf
+        # neighbors = np.where(mask, distance_matrix, np.inf)
+        # np.fill_diagonal(neighbors, 0)
+
+
+
         # ??????????????????? what if two neighbors are in equal distances?
         # Sort distances and get the nearest k ones
         k_nearest_neighbors = np.argsort(distance_matrix, axis=1)[:, :self.k]

@@ -51,6 +51,11 @@ class PCA:
         sorted_indices = np.argsort(eigenvalues)[::-1]
         eigenvalues = eigenvalues[sorted_indices]
         eigenvectors = eigenvectors[:, sorted_indices]
+
+        # # Align eigenvectors with sklearn's PCA (flip if necessary)
+        # # if v is an eigenvector so is -v
+        # eigenvectors[:, eigenvectors[0, :] < 0] *= -1
+
         return eigenvalues, eigenvectors
 
     def fit(self, X):
@@ -144,7 +149,6 @@ if __name__ == "__main__":
     # Compare PCA
     sklearn_pca = SklearnPCA(n_components=2)
     sklearn_transformed = sklearn_pca.fit_transform(data)
-    print("Scikit-Learn PCA:\n", sklearn_transformed)
     pca_error = np.linalg.norm(data_2d - sklearn_transformed)
     print(f"PCA Error: {pca_error:.2f}")
 
