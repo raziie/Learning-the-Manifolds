@@ -18,7 +18,9 @@ class PCA:
         # TODO: initialize required instance variables.
         self.n_components = n_components
         self.top_eigenvalues, self.top_eigenvectors = None, None
+        self.eigenvalues, self.eigenvectors = None, None
         self.average = None
+        self.explained_variance_ratio_ = None
 
     def _center_data(self, X):
         # TODO: Compute the mean of X along axis 0 (features) and subtract it from X
@@ -49,14 +51,13 @@ class PCA:
         eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
         # Sort eigenvalues and eigenvectors in descending order
         sorted_indices = np.argsort(eigenvalues)[::-1]
-        eigenvalues = eigenvalues[sorted_indices]
-        eigenvectors = eigenvectors[:, sorted_indices]
+        self.eigenvalues = eigenvalues[sorted_indices]
+        self.eigenvectors = eigenvectors[:, sorted_indices]
 
         # # Align eigenvectors with sklearn's PCA (flip if necessary)
         # # if v is an eigenvector so is -v
         # eigenvectors[:, eigenvectors[0, :] < 0] *= -1
-
-        return eigenvalues, eigenvectors
+        return
 
     def fit(self, X):
         """
@@ -70,10 +71,10 @@ class PCA:
         # TODO: Compute the covariance matrix
         cov_matrix = self._create_cov(X_centered)
         # TODO: Perform eigen decomposition
-        eigenvalues, eigenvectors = self._decompose(cov_matrix)
+        self._decompose(cov_matrix)
         # get top principal components
-        self.top_eigenvectors = eigenvectors[:, :self.n_components]
-        self.top_eigenvalues = eigenvalues[:self.n_components]
+        self.top_eigenvectors = self.eigenvectors[:, :self.n_components]
+        self.top_eigenvalues = self.eigenvalues[:self.n_components]
 
         # should I return anything? or should I do anything else?
         return
@@ -92,6 +93,8 @@ class PCA:
         X_centered = self._center_data(X)
         # TODO: Apply projection
         transformed_data = X_centered @ self.top_eigenvectors
+        # Compute explained variance ratio (EVR)
+        self.explained_variance_ratio_ = self.eigenvalues / np.sum(self.eigenvalues)
         return transformed_data
 
     def fit_transform(self, X):

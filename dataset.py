@@ -31,5 +31,6 @@ def generate_plane(d=2, dim=3, classes=2, n_samples=500, noise_std=0.1):
 
 def load_dataset(path):
     dataset = np.load(path)
-    return dataset['data'], dataset['color']
+    data, label = dataset.files
+    return dataset[data], dataset[label]
 
