@@ -93,18 +93,6 @@ if __name__ == "__main__":
     path = "datasets/swissroll.npz"
     data, labels = load_dataset(path)
 
-    # Visualize the Swiss Roll in 3D
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=labels, cmap='Spectral', s=15)
-    legend1 = ax.legend(*scatter.legend_elements(), title="Labels")
-    ax.add_artist(legend1)
-    ax.set_title("Swiss Roll Dataset")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
-    plt.show()
-
     # TODO: Perform LLE
     # Apply LLE
     lle = LLE(n_components=2, adj_calculator=KNearestNeighbors(20))

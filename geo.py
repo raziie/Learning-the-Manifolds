@@ -7,8 +7,13 @@ def _compute_distance_matrix(X):
     # d(xi, xj) = sqrt(sum((xi,k - xj,k)^2))
     # = sqrt(sum(xi,k^2) + sum(xj,k^2) - 2 * sum(xi,k xj,k))
     # = sqrt(||xi||^2 + ||xj||^2 - 2 * xi xj^T)
-    distance_matrix = np.sqrt(squared_sum + squared_sum.T - 2 * X @ X.T)
-    return distance_matrix
+    distance_matrix = squared_sum + squared_sum.T - 2 * X @ X.T
+    # distance_matrix = np.sum((X[:, None, :] - X[None, :, :]) ** 2, axis=-1)
+
+    # Clip negative values caused by floating-point errors
+    distance_matrix = np.maximum(distance_matrix, 0)
+
+    return np.sqrt(distance_matrix)
 
 
 class KNearestNeighbors:

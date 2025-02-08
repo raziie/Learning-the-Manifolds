@@ -33,16 +33,14 @@ class PCA:
         # number of samples
         n = X.shape[0]
         # Covariance formula: (1 / n-1) X^T X
+        # is it n or n-1 or nothing?
         cov_matrix = (1/(n-1)) * (X.T@X)
 
-
         # # am I supposed to use np.cov or not?
-        # # is it n or n-1?
         # cov_matrix1 = np.cov(X, rowvar=False)
         # print(np.allclose(cov_matrix1, cov_matrix, atol=1e-2))
         # print(cov_matrix1)
         # print(cov_matrix)
-
 
         return cov_matrix
 
