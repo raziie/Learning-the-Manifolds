@@ -1,11 +1,7 @@
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
-from scipy.sparse import csr_matrix, eye
-from scipy.sparse.linalg import eigsh
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_swiss_roll
-from geo import KNearestNeighbors
+from geo import KNearestNeighbors, _compute_distance_matrix
 from dataset import load_dataset
+from plot_utils import plot_2d_data
 
 
 class LLE:
@@ -39,9 +35,9 @@ class LLE:
             C = Xi @ Xi.T  # (k, k)
             k = C.shape[0]
             # Regularize to avoid singularities
-            C += reg * np.eye(k) * np.trace(C)
+            C += reg * np.eye(k) * (np.trace(C) if np.trace(C) > 0 else 1)
 
-            # Solve for the weights using least squares (GW = 1)
+            # Solve for the weights using least squares (CW = 1)
             w = np.linalg.solve(C, np.ones(k))  # (k,)
 
             # Normalize weights to sum to 1
@@ -60,7 +56,7 @@ class LLE:
         M = (I - W).T @ (I - W)
         # TODO: Find eigen vectors
         # Perform eigenvalue decomposition on M
-        eigenvalues, eigenvectors = np.linalg.eigh(M)
+        eigenvalues, eigenvectors = np.linalg.eig(M)
         # TODO: Return the vectors corresponding to the smallest non-zero values
         # Sort eigenvalues and eigenvectors in ascending order
         sorted_indices = np.argsort(eigenvalues)
@@ -80,6 +76,8 @@ class LLE:
         """
         # TODO: Find nearest neighbors
         nearest_neighbors = self._adj_calculator(X)
+        # distance_matrix = _compute_distance_matrix(X)
+        # nearest_neighbors = np.where(self._adj_calculator(X) == 1, distance_matrix, 0)
         # TODO: Compute reconstruction weights
         W = self._compute_weights(X, nearest_neighbors)
         # TODO: Compute embedding
@@ -98,19 +96,13 @@ if __name__ == "__main__":
     lle = LLE(n_components=2, adj_calculator=KNearestNeighbors(20))
     data_2d = lle.fit_transform(data)
 
+    # TODO: Visualize the results
+    # Visualize the 2D projection
+    plot_2d_data(data_2d, labels, "LLE Projection of Swiss Roll")
+
     from sklearn.manifold import LocallyLinearEmbedding
     # Compare LLE
     lle = LocallyLinearEmbedding(n_components=2, n_neighbors=20)
     sklearn_transformed = lle.fit_transform(data)
     lle_error = np.linalg.norm(data_2d - sklearn_transformed)
     print(f"lle Error: {lle_error:.2f}")
-
-    # TODO: Visualize the results
-    # Visualize the 2D projection
-    plt.figure(figsize=(8, 6))
-    plt.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='Spectral', s=15)
-    plt.colorbar(label="Labels")
-    plt.title("LLE Projection of Swiss Roll")
-    plt.xlabel("Principal Component 1")
-    plt.ylabel("Principal Component 2")
-    plt.show()

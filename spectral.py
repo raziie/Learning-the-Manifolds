@@ -1,6 +1,5 @@
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
-import matplotlib.pyplot as plt
+from plot_utils import plot_2d_data
 from geo import KNearestNeighbors, EpsNeighborhood, _compute_distance_matrix
 from dataset import load_dataset
 
@@ -31,7 +30,6 @@ class Spectral:
         # # Solve the eigenvalue problem
         # eigenvalues, eigenvectors = np.linalg.eig(L)
         # eigenvectors = D_sqrt_inv @ eigenvectors  # Transform back
-
 
         L = D - W
         D_sqrt_inv = np.diag(1.0 / np.sqrt(np.diag(D) + 1e-8))  # Avoid division by zero
@@ -75,10 +73,4 @@ if __name__ == "__main__":
     print(f"spectral Error: {spectral_error:.2f}")
 
     # Visualize the 2D projection
-    plt.figure(figsize=(8, 6))
-    plt.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='Spectral', s=15)
-    plt.colorbar(label="Labels")
-    plt.title("Spectral Projection of Swiss Roll")
-    plt.xlabel("Principal Component 1")
-    plt.ylabel("Principal Component 2")
-    plt.show()
+    plot_2d_data(data_2d, labels, "Spectral Projection of Swiss Roll")

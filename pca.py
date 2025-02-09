@@ -1,6 +1,6 @@
 import numpy as np
-from matplotlib import pyplot as plt
-from dataset import load_dataset
+from plot_utils import plot_2d_data, plot_3d_data
+from dataset import load_dataset, generate_plane
 
 
 class PCA:
@@ -33,14 +33,10 @@ class PCA:
         # number of samples
         n = X.shape[0]
         # Covariance formula: (1 / n-1) X^T X
-        # is it n or n-1 or nothing?
         cov_matrix = (1/(n-1)) * (X.T@X)
 
-        # # am I supposed to use np.cov or not?
         # cov_matrix1 = np.cov(X, rowvar=False)
         # print(np.allclose(cov_matrix1, cov_matrix, atol=1e-2))
-        # print(cov_matrix1)
-        # print(cov_matrix)
 
         return cov_matrix
 
@@ -74,7 +70,6 @@ class PCA:
         self.top_eigenvectors = self.eigenvectors[:, :self.n_components]
         self.top_eigenvalues = self.eigenvalues[:self.n_components]
 
-        # should I return anything? or should I do anything else?
         return
     
     def transform(self, X):
@@ -125,44 +120,27 @@ class PCA:
 
 
 if __name__ == "__main__":
+    # Generate a 2D plane in 3D space with 4 classes
+    hyperplane, h_labels = generate_plane(d=2, dim=3, n_samples=500, classes=4, noise_std=0.05)
+    plot_3d_data(hyperplane, h_labels, "2D Hyperplane in 3D Space")
+    # Perform PCA
+    pca = PCA(n_components=2)
+    hyperplane_2d = pca.fit_transform(hyperplane)
+    # Visualize the projected data
+    plot_2d_data(hyperplane_2d, h_labels, "PCA Projection of 2D Hyperplane")
+
     # TODO: Load swiss roll dataset
     path = "datasets/swissroll.npz"
     data, labels = load_dataset(path)
-
     # Visualize the Swiss Roll in 3D
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=labels, cmap='Spectral', s=15)
-    legend1 = ax.legend(*scatter.legend_elements(), title="Labels")
-    ax.add_artist(legend1)
-    ax.set_title("Swiss Roll Dataset")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
-    plt.show()
-
+    plot_3d_data(data, labels, "Swiss Roll Dataset")
     # TODO: Perform PCA
     # Apply PCA to reduce to 2D
     pca = PCA(n_components=2)
     data_2d = pca.fit_transform(data)
-
-    from sklearn.decomposition import PCA as SklearnPCA
-    # Compare PCA
-    sklearn_pca = SklearnPCA(n_components=2)
-    sklearn_transformed = sklearn_pca.fit_transform(data)
-    pca_error = np.linalg.norm(data_2d - sklearn_transformed)
-    print(f"PCA Error: {pca_error:.2f}")
-
-
     # TODO: Visualize the results
     # Visualize the 2D projection
-    plt.figure(figsize=(8, 6))
-    plt.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='Spectral', s=15)
-    plt.colorbar(label="Labels")
-    plt.title("PCA Projection of Swiss Roll")
-    plt.xlabel("Principal Component 1")
-    plt.ylabel("Principal Component 2")
-    plt.show()
+    plot_2d_data(data_2d, labels, "PCA Projection of Swiss Roll")
 
     # TODO: Reconstruct dataset
     # Reconstruct the data
@@ -170,33 +148,11 @@ if __name__ == "__main__":
     # Calculate and display reconstruction error
     reconstruction_error = np.linalg.norm(data - reconstructed_data)
     print(f"Reconstruction Error: {reconstruction_error:.2f}")
+    plot_3d_data(reconstructed_data, labels, "Swiss Roll Dataset Reconstructed")
 
-
-    # # Generate a 2D plane in 3D space with 4 classes
-    # data, labels = generate_plane(d=2, dim=3, n_samples=500, classes=4, noise_std=0.5)
-    #
-    # # Plot the data in 3D
-    # fig = plt.figure(figsize=(10, 8))
-    # ax = fig.add_subplot(111, projection='3d')
-    # scatter = ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=labels, cmap='viridis', s=15)
-    # legend1 = ax.legend(*scatter.legend_elements(), title="Classes")
-    # ax.add_artist(legend1)
-    # ax.scatter(np.mean(data, axis=0)[0], np.mean(data, axis=0)[1], np.mean(data, axis=0)[2], marker="x", c="red")
-    # ax.set_title("2D Hyperplane in 3D Space")
-    # ax.set_xlabel("X")
-    # ax.set_ylabel("Y")
-    # ax.set_zlabel("Z")
-    # plt.show()
-    #
-    # # Perform PCA
-    # pca = PCA(n_components=2)
-    # data_2d = pca.fit_transform(data)
-    #
-    # # Visualize the projected data
-    # plt.figure(figsize=(8, 6))
-    # plt.scatter(data_2d[:, 0], data_2d[:, 1], c=labels, cmap='viridis', s=15)
-    # plt.colorbar(label="Labels")
-    # plt.title("PCA Projection of 2D Hyperplane")
-    # plt.xlabel("Principal Component 1")
-    # plt.ylabel("Principal Component 2")
-    # plt.show()
+    from sklearn.decomposition import PCA as SklearnPCA
+    # Compare PCA
+    sklearn_pca = SklearnPCA(n_components=2)
+    sklearn_transformed = sklearn_pca.fit_transform(data)
+    pca_error = np.linalg.norm(data_2d - sklearn_transformed)
+    print(f"PCA Error: {pca_error:.2f}")

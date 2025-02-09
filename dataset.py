@@ -18,7 +18,6 @@ def generate_plane(d=2, dim=3, classes=2, n_samples=500, noise_std=0.1):
     labels = np.zeros(n_samples, dtype=int)
 
     for i, point in enumerate(samples):
-        # point_centered = np.subtract(point, np.mean(samples, axis=0))
         # Use the first two dimensions of the points to assign labels
         x, y = point[:2]
         # Determine the grid cell (row, col) and calculate a unique label
@@ -33,4 +32,3 @@ def load_dataset(path):
     dataset = np.load(path)
     data, label = dataset.files
     return dataset[data], dataset[label]
-
