@@ -41,6 +41,7 @@ class Spectral:
 
         # L = D - W
         # # Solve the generalized eigenvalue problem L*y = lambda*D*y
+        # D_inv = np.diag(1.0 / np.diag(D) + 1e-8)
         # eigenvalues, eigenvectors = np.linalg.eig(np.linalg.inv(D) @ L)
 
         Y = eigenvectors[:, 1:self.n_components + 1]
@@ -65,12 +66,12 @@ if __name__ == "__main__":
     spectral = Spectral(n_components=2, adj_calculator=KNearestNeighbors(10))
     data_2d = spectral.fit_transform(data)
 
-    from sklearn.manifold import SpectralEmbedding
-
-    spectral = SpectralEmbedding(n_components=2, affinity='nearest_neighbors', n_neighbors=10, random_state=42)
-    spectral_transformed = spectral.fit_transform(data)
-    spectral_error = np.linalg.norm(data_2d - spectral_transformed)
-    print(f"spectral Error: {spectral_error:.2f}")
-
     # Visualize the 2D projection
     plot_2d_data(data_2d, labels, "Spectral Projection of Swiss Roll")
+
+    # from sklearn.manifold import SpectralEmbedding
+    #
+    # spectral = SpectralEmbedding(n_components=2, affinity='nearest_neighbors', n_neighbors=10, random_state=42)
+    # spectral_transformed = spectral.fit_transform(data)
+    # spectral_error = np.linalg.norm(data_2d - spectral_transformed)
+    # print(f"spectral Error: {spectral_error:.2f}")

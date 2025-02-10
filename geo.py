@@ -42,21 +42,6 @@ class KNearestNeighbors:
         # Mask out the diagonal by setting it to infinity
         np.fill_diagonal(distance_matrix, np.inf)
 
-        # # to consider all points in the same distance and not just the first one
-        # # Sort distances for each row (each point)
-        # sorted_indices = np.argsort(distance_matrix, axis=1)  # Indices of sorted distances
-        # sorted_distances = np.sort(distance_matrix, axis=1)  # Sorted distances
-        #
-        # # Get the distance of the k-th nearest neighbor
-        # kth_distance = sorted_distances[:, self.k - 1:self.k]  # Shape (m,1)
-        #
-        # # Create a mask where distances <= k-th nearest distance
-        # mask = distance_matrix <= kth_distance  # Shape (m,m), True where edge should exist
-        #
-        # # Construct adjacency matrix with distances, set non-edges to np.inf
-        # neighbors = np.where(mask, distance_matrix, np.inf)
-        # np.fill_diagonal(neighbors, 0)
-
         # Sort distances and get the nearest k ones
         k_nearest_neighbors = np.argsort(distance_matrix, axis=1)[:, :self.k]
 
@@ -107,14 +92,7 @@ class EpsNeighborhood:
 
 
 if __name__ == "__main__":
-    # data = np.random.randn(4, 6)
     data = np.random.randint(10, size=(4, 6))
-    # data = np.array([
-    #     [0, 0],  # Point 0
-    #     [1, 1],  # Point 1
-    #     [2, 2],  # Point 2
-    #     [8, 8],  # Point 3 (far from others)
-    # ])
     # data = np.array([
     #     [0, 0],
     #     [1, 0],
@@ -125,10 +103,5 @@ if __name__ == "__main__":
     print(_compute_distance_matrix(data))
     knn = KNearestNeighbors(2)
     print(knn(data))
-    eps_neighborhood = EpsNeighborhood(5)
+    eps_neighborhood = EpsNeighborhood(10)
     print(eps_neighborhood(data))
-
-    X = np.array([[0, 0], [1, 0], [2, 0]])
-    knn = KNearestNeighbors(k=1)
-    adjacency_matrix = knn(X)
-    print("Adjacency Matrix:\n", adjacency_matrix)

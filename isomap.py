@@ -70,7 +70,7 @@ class Isomap:
         C = np.subtract(I, (1/n)*J)
         # C = I - (1 / n) * J
         D_squared = np.square(geodesic_distances)
-        # D2 = D ** 2
+        # D_squared = D ** 2
         B = (-1/2) * (C @ D_squared @ C)
 
         # apply PCA
@@ -88,17 +88,17 @@ class Isomap:
         # TODO: Compute the distance matrix
         # TODO: Construct the adjacency graph
         geodesic_graph = self._compute_geodesic_distances(X)
-        # geodesic_graph = np.nan_to_num(geodesic_graph, nan=0.0, neginf=0.0, posinf=0.0)
-        finite_geodesic_distances = geodesic_graph[np.isfinite(geodesic_graph)]
-        max_finite = np.max(finite_geodesic_distances)
-        min_finite = np.min(finite_geodesic_distances)
-
-        geodesic_distances = np.nan_to_num(
-            geodesic_graph,
-            posinf=max_finite + np.random.uniform(0, 1e-5),
-            neginf=min_finite - np.random.uniform(0, 1e-5),
-            nan=max_finite + np.random.uniform(0, 1e-5)
-        )
+        geodesic_graph = np.nan_to_num(geodesic_graph, nan=0.0, neginf=0.0, posinf=0.0)
+        # finite_geodesic_distances = geodesic_graph[np.isfinite(geodesic_graph)]
+        # max_finite = np.max(finite_geodesic_distances)
+        # min_finite = np.min(finite_geodesic_distances)
+        #
+        # geodesic_graph = np.nan_to_num(
+        #     geodesic_graph,
+        #     posinf=max_finite + np.random.uniform(0, 1e-5),
+        #     neginf=min_finite - np.random.uniform(0, 1e-5),
+        #     nan=max_finite + np.random.uniform(0, 1e-5)
+        # )
 
         # TODO: Perform dimensionality reduction on geodesic distances
         transformed_data = self._decompose(geodesic_graph)
@@ -118,26 +118,9 @@ if __name__ == "__main__":
 
     plot_2d_data(data_2d, labels, "isomap Projection of Swiss Roll")
 
-    from sklearn.manifold import Isomap as SklearnIsomap
-    # Compare Isomap
-    sklearn_isomap = SklearnIsomap(n_components=2)
-    sklearn_transformed = sklearn_isomap.fit_transform(data)
-    isomap_error = np.linalg.norm(data_2d - sklearn_transformed)
-    print(f"isomap Error: {isomap_error:.2f}")
-
-    # # Define a small dataset
-    # X_test = np.array([[0, 0], [1, 0], [2, 0], [3, 0]])
-    # # X_test = np.array([
-    # #     [0, 0],  # Point 0
-    # #     [1, 1],  # Point 1
-    # #     [2, 2],  # Point 2
-    # #     [8, 8],  # Point 3 (far from others)
-    # # ])
-    #
-    # # Create an Isomap instance with KNN adjacency calculation
-    # isomap = Isomap(n_components=2, adj_calculator=KNearestNeighbors(3))
-    # # Compute geodesic distances
-    # geodesic_distances = isomap._compute_geodesic_distances(X_test)
-    # # Print the computed geodesic distance matrix
-    # print("Geodesic Distance Matrix:")
-    # print(geodesic_distances)
+    # from sklearn.manifold import Isomap as SklearnIsomap
+    # # Compare Isomap
+    # sklearn_isomap = SklearnIsomap(n_components=2)
+    # sklearn_transformed = sklearn_isomap.fit_transform(data)
+    # isomap_error = np.linalg.norm(data_2d - sklearn_transformed)
+    # print(f"isomap Error: {isomap_error:.2f}")

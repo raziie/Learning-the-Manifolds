@@ -47,6 +47,7 @@ class Visualizer:
 
         # Plot each variation in its own subplot
         for i, (name, transformed_data, trust) in enumerate(group):
+            print(f"{name} Trustworthiness: {trust:.4f}")
             ax = axes[i]
             ax.scatter(transformed_data[:, 0], transformed_data[:, 1], c=self.labels, cmap="Spectral", s=10)
             ax.set_title(f"{name} - Trust: {trust:.4f}")
@@ -63,3 +64,4 @@ class Visualizer:
         fig.suptitle(f"{base_name}", fontsize=16)
         plt.tight_layout(rect=(0.0, 0.03, 1.0, 0.95))  # Adjust for subtitle
         plt.show()
+

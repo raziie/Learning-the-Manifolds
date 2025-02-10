@@ -1,5 +1,5 @@
 import numpy as np
-from geo import KNearestNeighbors, _compute_distance_matrix
+from geo import KNearestNeighbors, EpsNeighborhood, _compute_distance_matrix
 from dataset import load_dataset
 from plot_utils import plot_2d_data
 
@@ -59,9 +59,9 @@ class LLE:
         eigenvalues, eigenvectors = np.linalg.eig(M)
         # TODO: Return the vectors corresponding to the smallest non-zero values
         # Sort eigenvalues and eigenvectors in ascending order
-        sorted_indices = np.argsort(eigenvalues)
-        eigenvalues = eigenvalues[sorted_indices]
-        eigenvectors = eigenvectors[:, sorted_indices]
+        sorted_indices = np.argsort(eigenvalues.real)
+        eigenvalues = eigenvalues.real[sorted_indices]
+        eigenvectors = eigenvectors.real[:, sorted_indices]
 
         # Discard the smallest eigenvalue and its corresponding eigenvector
         Y = eigenvectors[:, 1:self.n_components + 1]  # (m, n_components)
@@ -93,16 +93,16 @@ if __name__ == "__main__":
 
     # TODO: Perform LLE
     # Apply LLE
-    lle = LLE(n_components=2, adj_calculator=KNearestNeighbors(20))
+    lle = LLE(n_components=2, adj_calculator=KNearestNeighbors(10))
     data_2d = lle.fit_transform(data)
 
     # TODO: Visualize the results
     # Visualize the 2D projection
     plot_2d_data(data_2d, labels, "LLE Projection of Swiss Roll")
 
-    from sklearn.manifold import LocallyLinearEmbedding
-    # Compare LLE
-    lle = LocallyLinearEmbedding(n_components=2, n_neighbors=20)
-    sklearn_transformed = lle.fit_transform(data)
-    lle_error = np.linalg.norm(data_2d - sklearn_transformed)
-    print(f"lle Error: {lle_error:.2f}")
+    # from sklearn.manifold import LocallyLinearEmbedding
+    # # Compare LLE
+    # lle = LocallyLinearEmbedding(n_components=2, n_neighbors=20)
+    # sklearn_transformed = lle.fit_transform(data)
+    # lle_error = np.linalg.norm(data_2d - sklearn_transformed)
+    # print(f"lle Error: {lle_error:.2f}")

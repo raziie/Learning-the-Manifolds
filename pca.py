@@ -33,10 +33,7 @@ class PCA:
         # number of samples
         n = X.shape[0]
         # Covariance formula: (1 / n-1) X^T X
-        cov_matrix = (1/(n-1)) * (X.T@X)
-
-        # cov_matrix1 = np.cov(X, rowvar=False)
-        # print(np.allclose(cov_matrix1, cov_matrix, atol=1e-2))
+        cov_matrix = (X.T@X)
 
         return cov_matrix
 
@@ -121,7 +118,7 @@ class PCA:
 
 if __name__ == "__main__":
     # Generate a 2D plane in 3D space with 4 classes
-    hyperplane, h_labels = generate_plane(d=2, dim=3, n_samples=500, classes=4, noise_std=0.05)
+    hyperplane, h_labels = generate_plane(d=2, dim=3, n_samples=500, classes=4, noise_std=0.5)
     plot_3d_data(hyperplane, h_labels, "2D Hyperplane in 3D Space")
     # Perform PCA
     pca = PCA(n_components=2)
@@ -132,6 +129,7 @@ if __name__ == "__main__":
     # TODO: Load swiss roll dataset
     path = "datasets/swissroll.npz"
     data, labels = load_dataset(path)
+    print(data.shape)
     # Visualize the Swiss Roll in 3D
     plot_3d_data(data, labels, "Swiss Roll Dataset")
     # TODO: Perform PCA
@@ -150,9 +148,9 @@ if __name__ == "__main__":
     print(f"Reconstruction Error: {reconstruction_error:.2f}")
     plot_3d_data(reconstructed_data, labels, "Swiss Roll Dataset Reconstructed")
 
-    from sklearn.decomposition import PCA as SklearnPCA
-    # Compare PCA
-    sklearn_pca = SklearnPCA(n_components=2)
-    sklearn_transformed = sklearn_pca.fit_transform(data)
-    pca_error = np.linalg.norm(data_2d - sklearn_transformed)
-    print(f"PCA Error: {pca_error:.2f}")
+    # from sklearn.decomposition import PCA as SklearnPCA
+    # # Compare PCA
+    # sklearn_pca = SklearnPCA(n_components=2)
+    # sklearn_transformed = sklearn_pca.fit_transform(data)
+    # pca_error = np.linalg.norm(data_2d - sklearn_transformed)
+    # print(f"PCA Error: {pca_error:.2f}")

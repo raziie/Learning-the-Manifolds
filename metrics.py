@@ -39,8 +39,8 @@ def trustworthiness(D, D_embedded, *, n_neighbors=5):
     # Compute final trustworthiness score
     T = 1 - (2 / (n * n_neighbors * (2 * n - 3 * n_neighbors - 1))) * penalty
 
-    from sklearn.manifold import trustworthiness
-    out_sklearn = trustworthiness(D, D_embedded, n_neighbors=n_neighbors)
-    print(f"sklearn:{out_sklearn:.2f}")
+    # from sklearn.manifold import trustworthiness
+    # out_sklearn = trustworthiness(D, D_embedded, n_neighbors=n_neighbors)
+    # print(f"sklearn:{out_sklearn:.2f}")
 
     return T

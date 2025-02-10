@@ -39,9 +39,9 @@ def plot_images(data, reconstructed_data):
     plt.show()
 
 
-def plot_statistics(n_components, cumulative_evr):
+def plot_statistics(cumulative_evr):
     plt.figure(figsize=(8, 6))
-    plt.plot(range(1, n_components + 1), cumulative_evr, marker='o', linestyle='-')
+    plt.plot(cumulative_evr, marker='o', linestyle='-')
     plt.xlabel("Number of Components")
     plt.ylabel("Cumulative Explained Variance Ratio")
     plt.title("Explained Variance Ratio for ORL Faces")

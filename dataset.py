@@ -15,15 +15,16 @@ def generate_plane(d=2, dim=3, classes=2, n_samples=500, noise_std=0.1):
     samples += np.random.normal(scale=noise_std, size=samples.shape)
 
     grid = np.linspace(-1, 1, int(np.sqrt(classes)) + 1)[1:-1]
-    labels = np.zeros(n_samples, dtype=int)
 
-    for i, point in enumerate(samples):
-        # Use the first two dimensions of the points to assign labels
-        x, y = point[:2]
-        # Determine the grid cell (row, col) and calculate a unique label
-        row = sum((x > g) for g in grid)
-        col = sum((y > g) for g in grid)
-        labels[i] = row * int(np.sqrt(classes)) + col
+    # Compute labels using broadcasting instead of loops
+    # x value = samples[:, :1]
+    # y value = samples[:, 1:2]
+    # row = np.sum(samples[:, :1] > grid, axis=1)
+    # col = np.sum(samples[:, 1:2] > grid, axis=1)
+    labels = (
+            np.sum(samples[:, :1] > grid, axis=1) * int(np.sqrt(classes)) +
+            np.sum(samples[:, 1:2] > grid, axis=1)
+    )
 
     return samples, labels
 
